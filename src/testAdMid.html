@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Brightcove - Omniture analytics plugin test page</title>
+  <script src="lib/VisitorAPI.js"></script>
+  <script src="lib/AppMeasurement_Module_Media.js"></script>
+  <script src="lib/AppMeasurement_Module_Integrate.js"></script>  
+  <script src="lib/AppMeasurement.js"></script>
+  <script src="lib/VideoHeartbeat.js"></script>
+  <script src="lib/AdobeAnalyticsPlugin.js"></script>
+</head>
+
+<body>
+	<link href="//players.brightcove.net/videojs-ima3/videojs.ima3.min.css"
+		rel="stylesheet">
+
+	<video id="player" data-account="3921507369001"
+		data-player="75d31180-a307-4d3c-938d-8a8003009345"
+		data-embed="default" data-video-id="3924155810001" class="video-js" width="640" height="480" controls autoplay></video>
+	<script
+		src="//players.brightcove.net/3921507369001/75d31180-a307-4d3c-938d-8a8003009345_default/index.min.js"></script>
+
+
+	<script src="//players.brightcove.net/videojs-ima3/videojs.ima3.min.js"></script>
+
+	<script type="text/javascript" src="videojs.analytic.omniture.js?r=45242424"></script>
+	<script>
+	  videojs("player").ready(function() {
+	    // get a reference to the player
+	    myPlayer = this;
+	      
+	    // initialize the ima3 plugin that was registered in ima3.min.js with custom options
+	    myPlayer.ima3({
+			adTechOrder: ["html5"],
+			serverUrl: 'http://pubads.g.doubleclick.net/gampad/ads?sz=640x360&iu=/6390/Marks-Ads-Test-Unit-1&ciu_szs=728x90&impl=s&gdfp_req=1&env=vp&output=xml_vmap1&unviewed_position_start=1&url=%5breferrer_url%5d&correlator=%5btimestamp%5d&ad_rule=1&cmsid=580&vid=1760859514001'
+	    });
+	    myPlayer.omniturePlugin({
+			  abc: "123"
+		});
+	  });
+	  
+</script>
+</body>
+
+</html>

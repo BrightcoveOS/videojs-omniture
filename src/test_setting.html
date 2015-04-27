@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Brightcove - Omniture analytics plugin test page</title>
+<script src="lib/VisitorAPI.js"></script>
+<script src="lib/AppMeasurement_Module_Media.js"></script>
+<script src="lib/AppMeasurement_Module_Integrate.js"></script>
+<script src="lib/AppMeasurement.js"></script>
+<script src="lib/VideoHeartbeat.js"></script>
+<script src="lib/AdobeAnalyticsPlugin.js"></script>
+</head>
+
+<body>
+	<link href="//players.brightcove.net/videojs-ima3/videojs.ima3.min.css"
+		rel="stylesheet">
+
+	<video id="player" data-account="3921507369001"
+		data-player="75d31180-a307-4d3c-938d-8a8003009345"
+		data-embed="default" data-video-id="3924155810001" class="video-js"
+		width="640" height="480" controls autoplay></video>
+	<script
+		src="//players.brightcove.net/3921507369001/75d31180-a307-4d3c-938d-8a8003009345_default/index.min.js"></script>
+
+
+	<script src="//players.brightcove.net/videojs-ima3/videojs.ima3.min.js"></script>
+
+	<script type="text/javascript"
+		src="videojs.analytic.omniture.js?r=45242424"></script>
+	<script>
+	  // get a reference to the player
+		var player = videojs('player');
+		customEventMapping = {
+				disable : false,
+				bc_data_mapping : {
+					name : "eVar202,prop2",
+					segment : "eVar203",
+					contentType : "eVar201",
+					timePlayed : "event203",
+					view : "event201",
+					segmentView : "event202",
+					complete : "event207",
+					milestones : {
+						25 : "event204",
+						50 : "event205",
+						75 : "event206"
+					}
+				},
+				bc_volumechange : {
+					event : 'event208',
+					evar : 'eVar204'
+				},
+				bc_ad_pause : {
+					event : 'event209',
+					evar : 'eVar205' // currentTime
+				},
+				bc_ad_resumed : {
+					event : 'event210',
+					evar : 'eVar205' //currentTime
+				},
+				bc_ad_click : {
+					event : 'event211',
+					evar : 'eVar206,eVar207'// eVar206: currentTime and eVar207:clickThroughUrl
+				},
+				bc_fullscreen_enter : {
+					event : 'event212',
+					evar : ''
+				},
+				bc_fullscreen_exit : {
+					event : 'event213',
+					evar : ''
+				},
+				bc_social_opened : {
+					event : 'event214',
+					evar : ''
+				},
+				bc_social_closed : {
+					event : 'event215',
+					evar : ''
+				}
+		};
+		var options = {
+			PLAYER : {
+				NAME : 'Brightcove Player'
+			},
+			VISITOR_API : {
+				MARKETING_CLOUD_ORG_ID : '2B8D246452DD9FBF0A490D45',
+				NAMESPACE : 'democorp',
+				TRACKING_SERVER : 'democorp.dc1.sc.omtrdc.net'
+			},
+			APP_MEASUREMENT : {
+				RSID : 'democorpscdocdev',
+				TRACKING_SERVER : 'democorp.dc1.sc.omtrdc.net'
+			},
+			HEARTBEAT : {
+				TRACKING_SERVER : 'http://heartbeats.omtrdc.net',
+				JOB_ID : 'sc_va',
+				PUBLISHER : 'Brightcove-publisher',
+				CHANNEL : 'Brightcove-channel',
+				OVP : 'Brightcove-ovp',
+				SDK : 'Brightcove-sdk',
+				DEBUG_LOGGING : false
+			},
+			CUSTOM_EVENT : customEventMapping
+		};
+	  player.omniturePlugin(options);
+</script>
+</body>
+
+</html>
