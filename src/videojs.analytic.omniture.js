@@ -13,7 +13,7 @@ function o_debug(msg) {
 
 /**
  * VideoPlayerDelegate implementation for video.js.
- * 
+ *
  */
 (function(ADB) {
 	'use strict';
@@ -109,7 +109,7 @@ function o_debug(msg) {
 			}
 		} else {
 			adInfo = null;
-		}		
+		}
 		return adInfo;
 	};
 
@@ -142,7 +142,7 @@ function o_debug(msg) {
 
 /**
  * VideoAnalyticsProvider
- * 
+ *
  */
 
 (function(ADB, VideoPlayerDelegate) {
@@ -194,7 +194,7 @@ function o_debug(msg) {
 
 	VideoAnalyticsProvider.prototype.destroy = function() {
 		if (this._player) {
-			// Comment for replay video 
+			// Comment for replay video
 //			this._videoHeartbeat.destroy();
 //			this._videoHeartbeat = null;
 //			this._playerDelegate = null;
@@ -402,18 +402,18 @@ function o_debug(msg) {
 				this._appMeasurement[this._dataMapping.bc_volumechange.evar] = 0;
 			} else {
 				this._appMeasurement[this._dataMapping.bc_volumechange.evar] = this._player.volume();
-			}			
+			}
 			this._appMeasurement.linkTrackVars = "events," + this._dataMapping.bc_volumechange.evar + ",contextData.a.media.name,contextData.a.media.playerName,contextData.a.media.channel,contextData.a.contentType";
 			this._appMeasurement.linkTrackEvents = this._dataMapping.bc_volumechange.event;
 			this._appMeasurement.tl(true, "bc", "bc_volumechange");
 		}
-	};	
+	};
 
 	VideoAnalyticsProvider.prototype._onAdPause = function(e) {
 		if (!this._dataMapping.disable) {
 			o_debug('Player event: AD_PAUSE');
 			// Custom event
-			this._appMeasurement.events = this._dataMapping.bc_ad_pause.event;		
+			this._appMeasurement.events = this._dataMapping.bc_ad_pause.event;
 			if (this._adplayer && this._adplayer.adPlayer.currentTime){
 				this._appMeasurement[this._dataMapping.bc_ad_pause.evar]  = this._adplayer.adPlayer.currentTime();
 			} else {
@@ -518,7 +518,7 @@ function o_debug(msg) {
 	VideoAnalyticsProvider.prototype._setupAutoTracking = function() {
 		this._appMeasurement.loadModule("Media");
 		this._appMeasurement.Media.autoTrack = true;
-		this._appMeasurement.Media.trackVars = "events," 
+		this._appMeasurement.Media.trackVars = "events,"
 			+ this._dataMapping.bc_data_mapping.contentType + ','
 			+ this._dataMapping.bc_data_mapping.name + ','
 			+ this._dataMapping.bc_data_mapping.segment;
@@ -624,7 +624,7 @@ function o_debug(msg) {
 		this._player.on('adend', function(evt) {
 			o_debug('Player event: adend');
 			that._adPlaying = false;
-			that._onAdComplete(evt);			
+			that._onAdComplete(evt);
 			that._uninstallAdEventListeners();
 		});
 		this._player.on('ima3error', function(evt) {
@@ -658,9 +658,6 @@ function o_debug(msg) {
 			}
 			that._playheadTime = that._player.currentTime();
 			var _duration = that._player.duration();
-			if (that._player.mediainfo){
-				_duration = that._player.mediainfo.duration/1000;
-			}
 			if (!that._tracked0  && that._playheadTime > 0){
 				that._tracked0 = true;
 				that._onTrackMilestone(0);
@@ -727,7 +724,7 @@ function o_debug(msg) {
 		this._adplayer.adsManager.addEventListener(
 				google.ima.AdEvent.Type.STARTED, function(evt) {
 					that._onAdHbPlay(evt);
-				}, false, this);		
+				}, false, this);
 		this._adplayer.adsManager.addEventListener(
 				google.ima.AdEvent.Type.PAUSED, function(evt) {
 					that._onAdHbPause(evt);
@@ -776,11 +773,11 @@ function o_debug(msg) {
 		if (document.addEventListener) {
 			document.addEventListener('click', function(evt) {
 				that._checkVolumeChange();
-			});			
+			});
 		} else if (document.on) {
 			document.on('click', function(evt) {
 				that._checkVolumeChange();
-			});	
+			});
 		} else if (document.attachEvent) {
 			document.attachEvent('onclick', function(evt) {
 				that._checkVolumeChange();
@@ -790,11 +787,11 @@ function o_debug(msg) {
 		if (document.addEventListener) {
 			document.addEventListener('mouseup', function(evt) {
 				that._checkVolumeChange();
-			});			
+			});
 		} else if (document.on) {
 			document.on('mouseup', function(evt) {
 				that._checkVolumeChange();
-			});	
+			});
 		} else if (document.attachEvent) {
 			document.attachEvent('onmouseup', function(evt) {
 				that._checkVolumeChange();
@@ -806,14 +803,14 @@ function o_debug(msg) {
 					that._hasVolumeChange = false;
 					that._onVolumeChange(evt);
 				}
-			});			
+			});
 		} else if (document.on) {
 			document.on('touchend', function(evt) {
 				if (that._hasVolumeChange){
 					that._hasVolumeChange = false;
 					that._onVolumeChange(evt);
 				}
-			});	
+			});
 		} else if (document.attachEvent) {
 			document.attachEvent('ontouchend', function(evt) {
 				if (that._hasVolumeChange){
@@ -854,11 +851,11 @@ function o_debug(msg) {
 			if (this._socialCloseButton.addEventListener) {
 				this._socialCloseButton.addEventListener('click', function(evt) {
 					that._checkSocialClose(evt);
-				});			
+				});
 			} else if (this._socialCloseButton.on) {
 				this._socialCloseButton.on('click', function(evt) {
 					that._checkSocialClose(evt);
-				});	
+				});
 			} else if (this._socialCloseButton.attachEvent) {
 				this._socialCloseButton.attachEvent('onclick', function(evt) {
 					that._checkSocialClose(evt);
@@ -870,7 +867,7 @@ function o_debug(msg) {
 		{
 			if (!evt) evt = event;
 			if (evt.keyCode == 27){
-				that._checkSocialClose(evt);			
+				that._checkSocialClose(evt);
 			}
 		}
 	};
@@ -881,9 +878,9 @@ function o_debug(msg) {
 				if (that._player.socialOverlay.el_.offsetParent === null){
 					that._onSocialClosed(evt);
 					that._hasSocialOpen = false
-				} 
+				}
 			}, 500);
-		}	
+		}
 	}
 	VideoAnalyticsProvider.prototype._checkVolumeChange = function(evt) {
 		var that = this;
@@ -902,7 +899,7 @@ function o_debug(msg) {
 /** ************************ PLUGINS SECTION ************************ */
 /**
  * Omniture analytic plugin for video.js.
- * 
+ *
  */
 (function(window, document, vjs, undefined) {
 	"use strict";
