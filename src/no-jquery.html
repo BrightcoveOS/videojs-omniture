@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Brightcove - Omniture analytics plugin test page</title>
+	<style>
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		.video-js {
+			width: 640px;
+			height: 360px;
+		}
+		
+		#container { 
+			width: 800px; 
+			margin: 0 auto; 
+		}
+		
+		ul#projects {
+			list-style: none;
+		}
+		
+		ul#projects li {
+			float: left;
+			padding-left: 10px;
+		}
+		
+		ul.feature-list li.heading {
+			font-weight: bold;
+		}
+	</style>
+	<!-- page-specific CSS; unrelated to OpenSource plugin -->
+	<link href="http://psdev.brightcove.com/ps/player-team/css/page.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<div id="container">
+		<h1>Video Tracking Example; Loading jQuery Through Plugin</h1>
+            
+            <video
+				id="player"
+				data-video-id="2784419339001"
+				data-account="79558313"
+				data-player="21357e8b-adf5-473f-8756-817f5bdf74fa"
+				data-embed="default"
+				class="video-js" controls></video>
+			<script src="//players.brightcove.net/79558313/21357e8b-adf5-473f-8756-817f5bdf74fa_default/index.min.js"></script> <!-- always include JS from Player Snippet -->
+	</div>
+	
+	<script type="text/javascript" src="configuration/config.js"></script>
+	<script type="text/javascript" src="production_lib/bcc_adobe_analytics.min.js"></script>
+
+	<script>
+		videojs('player').BCGSAdobeAnalyticsPlugin({
+			jQuery: "2.1.4", // Example 2: load jQuery in through the plugin
+			options: bcgs_adobe_config
+		});
+	</script>
+</body>
+
+</html>
