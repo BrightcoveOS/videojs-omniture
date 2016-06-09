@@ -1,4 +1,4 @@
-/*! BCGSAdobeAnalyticsPlugin - v0.1.1 - 2016-03-15
+/*! BCGSAdobeAnalyticsPlugin - v0.1.1 - 2016-06-09
 * Copyright (c) 2016 Brightcove Consulting; Licensed  */
 function Visitor(m,s){if(!m)throw"Visitor requires Adobe Marketing Cloud Org ID";var a=this;a.version="1.5.1";var l=window,j=l.Visitor;l.s_c_in||(l.s_c_il=[],l.s_c_in=0);a._c="Visitor";a._il=l.s_c_il;a._in=l.s_c_in;a._il[a._in]=a;l.s_c_in++;var n=l.document,h=j.Na;h||(h=null);var x=j.Oa;x||(x=void 0);var i=j.la;i||(i=!0);var k=j.Ma;k||(k=!1);a.T=function(a){var c=0,b,e;if(a)for(b=0;b<a.length;b++)e=a.charCodeAt(b),c=(c<<5)-c+e,c&=c;return c};a.q=function(a){var c="0123456789",b="",e="",f,g=8,i=10,
 h=10;if(1==a){c+="ABCDEF";for(a=0;16>a;a++)f=Math.floor(Math.random()*g),b+=c.substring(f,f+1),f=Math.floor(Math.random()*g),e+=c.substring(f,f+1),g=16;return b+"-"+e}for(a=0;19>a;a++)f=Math.floor(Math.random()*i),b+=c.substring(f,f+1),0==a&&9==f?i=3:(1==a||2==a)&&10!=i&&2>f?i=10:2<a&&(i=10),f=Math.floor(Math.random()*h),e+=c.substring(f,f+1),0==a&&9==f?h=3:(1==a||2==a)&&10!=h&&2>f?h=10:2<a&&(h=10);return b+e};a.oa=function(){var a;!a&&l.location&&(a=l.location.hostname);if(a)if(/^[0-9.]+$/.test(a))a=
@@ -879,8 +879,15 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		if (this._dataMapping.bc_data_mapping === undefined || this._dataMapping.disable) { return; };
 		
 		var my_eVar = this._dataMapping.bc_data_mapping.name.split(",");
-		this._appMeasurement.linkTrackVars = "events," + this._dataMapping.bc_data_mapping.contentType + "," + my_eVar[0] + "," + this._dataMapping.bc_data_mapping.segment + ",contextData.a.media.name,contextData.a.media.playerName,contextData.a.media.channel,contextData.a.contentType";
-		this._appMeasurement[my_eVar[0]]  = this._player.src();
+		this._appMeasurement.linkTrackVars = "events," + this._dataMapping.bc_data_mapping.contentType + "," + this._dataMapping.bc_data_mapping.segment + ",contextData.a.media.name,contextData.a.media.playerName,contextData.a.media.channel,contextData.a.contentType";
+		
+		// assign name to all eVars/props defined in config
+		for (var item in my_eVar) {
+			console.log(my_eVar[item]);
+			this._appMeasurement.linkTrackVars += "," + my_eVar[item];
+			this._appMeasurement[my_eVar[item]] = this._player.mediainfo.name;
+		}
+		
 		this._appMeasurement[this._dataMapping.bc_data_mapping.contentType]  = 'video';
 		switch(milestone) {
 		case 0:

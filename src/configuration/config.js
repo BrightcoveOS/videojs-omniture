@@ -8,7 +8,7 @@ var bcgs_adobe_config = {
     },
     
     APP_MEASUREMENT : {
-        RSID : "bcc-reporting-suite",
+        RSID : "bc-mikey-test",
         TRACKING_SERVER : 'bcgs-test.sc.omtrdc.net'
     },
     
@@ -23,7 +23,6 @@ var bcgs_adobe_config = {
     },
     
     QUALITY: {
-        AVERAGE_BITRATE: 0,
         TIME_TO_START: 0
     },
     
