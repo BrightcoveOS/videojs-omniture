@@ -112,12 +112,12 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
  * BCGS Adobe Analytics Plugin
  * @author mcarreiro
  * @version 1.0.0
- * v1.0.0: 11/18/15 
+ * v1.0.0: 11/18/15
  */
 (function (window, document) {
 
     "use strict";
-    
+
     /**
      * Constructor function for plugin. Place all code within.
      */
@@ -134,19 +134,19 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
             options = config.options,
 			hasLoadStartFired = false,
 			isAutoplay = false,
-			
+
 			/**
 			 * outputs logging to the browser console if debug mode is enabled
 			 */
 			o_debug = function(msg) {
 				var url = window.location.href;
-				
+
 				if (typeof (console) === 'undefined' || !config.debug) {
 					return;
 				}
 				console.log(msg);
 			},
-            
+
             /**
              * grabs the top-level domain of the current site for tracking as 'channel' value
              */
@@ -154,51 +154,51 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
                 var pageHost,
                     splitHost,
                     domain;
-                
+
                 pageHost = window.location.host;
                 splitHost = pageHost.split('.');
-                
+
                 // check that we have at least a top-level domain & extension (e.g., ["canada", "com"])
                 if (splitHost.length > 2) {
                     domain = splitHost[splitHost.length-2];
-                    
+
                     if (domain === null || typeof(domain) === undefined) { return; }
-                    
+
                     playerChannel = domain.toLowerCase();
                 }
             },
-            
+
             /**
              * update only the video-specific properties of configuration object
              */
             updateVideoConfiguration = function() {
                 options.QUALITY.TIME_TO_START = timeToStart;
-                
+
                 if (o_player) {
                     o_player.setConfigSettings(options);
                 }
             },
-            
+
             /**
              * load Adobe player delegates for tracking
              */
             loadPlayer = function() {
                 if (initialLoadComplete) { return; }
-                
+
                 options.PLAYER = {
                     NAME: player.bcAnalytics.settings.playerName,
                     CHANNEL: playerChannel
                 };
-                
+
                 if (options.HEARTBEAT) {
                     options.HEARTBEAT.CHANNEL = playerChannel;
                 }
-                
+
                 o_player = player.omniturePlugin(options, isAutoplay, o_debug);
-                
+
                 initialLoadComplete = true;
             },
-			
+
 			/**
 			 * dispatched when video metadata has loaded into the player
 			 */
@@ -206,10 +206,10 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				hasLoadStartFired = true;
                 bitrates = [];
                 loadPlayer();
-                
+
                 updateVideoConfiguration();
             },
-            
+
             /**
              * when first piece of media begins playback, clear
              * interval timer for 'timeToStart' variable
@@ -217,10 +217,10 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
             onMediaPlay = function() {
 				if (!hasLoadStartFired) { isAutoplay = true; }
                 clearInterval(playerLoadTimer);
-                
+
                 options.QUALITY.TIME_TO_START = timeToStart || 0;
             },
-            
+
 			/**
 			 * dispatched when jquery is loaded and plugin is ready to be used
 			 */
@@ -229,7 +229,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				player.on("loadstart", onLoadStart);
                 player.one("play", onMediaPlay);
             };
-            
+
             // load jQuery if needed
             if (config.jQuery && window.$ == undefined) {
                 var script = document.createElement('script');
@@ -239,12 +239,12 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
             } else {
                 onjQueryReady();
             }
-        
+
         // kick off timer to track 'timeToStart' QoS variable when plugin loads
         playerLoadTimer = setInterval(function() {
             timeToStart++;
         }, 1000);
-        
+
     };
 
     videojs.plugin("BCGSAdobeAnalyticsPlugin", constructor);
@@ -253,17 +253,17 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 /**
  * VideoPlayerDelegate implementation for video.js.
- * 
+ *
  */
 (function(ADB) {
 	'use strict';
-	
+
 	var o_debug;
 	var extend = ADB.core.extend;
 	var PlayerDelegate = ADB.va.plugins.videoplayer.VideoPlayerPluginDelegate;
-	
+
 	var AD_BREAK_POSITION = 0;
-	
+
 	extend(VideoPlayerDelegate, PlayerDelegate);
 
 	function VideoPlayerDelegate(player, provider, debugFunction) {
@@ -277,12 +277,12 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		this._adCounter = 0;
 		o_debug = debugFunction;
 	}
-	
+
 	VideoPlayerDelegate.prototype.getVideoInfo = function() {
 		// use the ADB.va.VideoInfo object prototype
 		var VideoInfoClass = ADB.va.plugins.videoplayer.VideoInfo;
 		var videoInfo = new VideoInfoClass();
-		
+
 		if(!this._provider.isAdPlaying()){
 			videoInfo.id = this._player.mediainfo.id;
 			videoInfo.name = this._player.mediainfo.name;
@@ -304,19 +304,19 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				videoInfo.playhead = Math.round(this._player.ima3.adPlayer.currentTime());
             }
 		}
-		
+
 		this._videoInfo = videoInfo;
-		
+
 		return videoInfo;
 	};
 
 	VideoPlayerDelegate.prototype.getAdBreakInfo = function() {
 		var AdBreakInfoClass = ADB.va.plugins.videoplayer.AdBreakInfo;
 		var adBreakInfo = new AdBreakInfoClass();
-		
+
 		if(this._provider.isAdPlaying()){
 			adBreakInfo.playerName = this._provider._settings.PLAYER.NAME;
-			
+
 			var adType = "";
 			if (this._player.ima3.currentAd && this._player.ima3.currentAd.getAdPodInfo){
 				this._adposition = this._player.ima3.currentAd.getAdPodInfo().getAdPosition();
@@ -337,7 +337,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 					adType = "midroll";
 				}
 			}
-			
+
 			adBreakInfo.id = this._player.mediainfo.id;
 			adBreakInfo.name = adType;
 			adBreakInfo.position = this._adposition;
@@ -345,7 +345,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		} else {
 			adBreakInfo = null;
 		}
-		
+
 		return adBreakInfo;
 	};
 
@@ -353,13 +353,13 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		var AdInfoClass = ADB.va.plugins.videoplayer.AdInfo;
 		var adInfo = new AdInfoClass();
 		var currentAd;
-		
+
 		if(this._provider.isAdPlaying()){
 			this._adCounter = this._adCounter+1;
 			if (this._player.ima3) {
 				if (this._player.ima3.currentAd) {
 					currentAd = this._player.ima3.currentAd.b ? this._player.ima3.currentAd.b : this._player.ima3.currentAd;
-					
+
 					adInfo.id = currentAd.id || currentAd.adId;
 					adInfo.name = currentAd.title;
 					adInfo.length = currentAd.duration;
@@ -375,7 +375,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		} else {
 			adInfo = null;
 		}
-		
+
 		return adInfo;
 	};
 
@@ -388,22 +388,22 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		var qosInfo = new QoSInfoClass();
 		var currentRendition,
 			averageBitrate = 0;
-		
-		if (typeof this._player.hls.playlists !== "undefined") {
+
+		if (typeof this._player.hls !== "undefined" && this._player.hls.playlists !== "undefined") {
 			currentRendition = this._player.hls.playlists.media();
-			
+
 			if (this._provider._bitrates.indexOf(currentRendition.attributes.BANDWIDTH) == -1) {
 				this._provider._bitrates.push(currentRendition.attributes.BANDWIDTH);
 			}
-			
+
 			averageBitrate = this._provider._calculateBitrateAverage();
 		}
-		
+
 		qosInfo.bitrate = averageBitrate;
 		qosInfo.fps = 0;
 		qosInfo.droppedFrames = 0;
 		qosInfo.startupTime = this._provider._settings.QUALITY.TIME_TO_START;
-		
+
 		return qosInfo;
 	};
 
@@ -428,7 +428,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 /**
  * VideoPlayerPluginDelegate implementation for video.js.
- * 
+ *
  */
 (function(ADB) {
     'use strict';
@@ -465,7 +465,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 /**
  * AdobeAnalyticsPluginDelegate implementation for video.js.
- * 
+ *
  */
 (function(ADB) {
     'use strict';
@@ -485,7 +485,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 /**
  * AdobeHeartbeatPluginDelegate implementation for video.js.
- * 
+ *
  */
 (function(ADB) {
     'use strict';
@@ -505,7 +505,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 /**
  * HeartbeatDelegate implementation for video.js.
- * 
+ *
  */
 (function(ADB) {
     'use strict';
@@ -525,7 +525,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 /**
  * VideoAnalyticsProvider
- * 
+ *
  */
 (function(ADB, VideoPlayerDelegate) {
 	'use strict';
@@ -535,16 +535,16 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	//var ConfigData = ADB.va.ConfigData;
 	var VideoHeartbeat = ADB.va.Heartbeat;
 	var ConfigData = ADB.va.HeartbeatConfig;
-	
+
 	var VideoPlayerPlugin = ADB.va.plugins.videoplayer.VideoPlayerPlugin;
     var VideoPlayerPluginConfig = ADB.va.plugins.videoplayer.VideoPlayerPluginConfig;
-	
+
 	var AdobeAnalyticsPlugin = ADB.va.plugins.aa.AdobeAnalyticsPlugin;
     var AdobeAnalyticsPluginConfig = ADB.va.plugins.aa.AdobeAnalyticsPluginConfig;
-	
+
 	var AdobeHeartbeatPlugin = ADB.va.plugins.ah.AdobeHeartbeatPlugin;
     var AdobeHeartbeatPluginConfig = ADB.va.plugins.ah.AdobeHeartbeatPluginConfig;
-	
+
 	var CATEGORY_SUBSTRING = "cat=";
 	var o_debug;
 
@@ -584,22 +584,22 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		o_debug = debugFunction;
 
 		this._playerDelegate = new VideoPlayerDelegate(this._player, this, o_debug);
-		
+
 		this._appMeasurement = appMeasurement;
-		
+
 		// Setup the video-player plugin
 		this._playerPlugin = new VideoPlayerPlugin(new SampleVideoPlayerPluginDelegate(this._playerDelegate));
         var playerPluginConfig = new VideoPlayerPluginConfig();
         playerPluginConfig.debugLogging = false; // set this to false for production apps.
         this._playerPlugin.configure(playerPluginConfig);
-		
+
         // Setup the AppMeasurement plugin.
         this._aaPlugin = new AdobeAnalyticsPlugin(appMeasurement, new SampleAdobeAnalyticsPluginDelegate());
         var aaPluginConfig = new AdobeAnalyticsPluginConfig();
         aaPluginConfig.channel = settings.HEARTBEAT.CHANNEL;
         aaPluginConfig.debugLogging = false; // set this to false for production apps.
         this._aaPlugin.configure(aaPluginConfig);
-		
+
         // Setup the AdobeHeartbeat plugin.
         this._ahPlugin = new AdobeHeartbeatPlugin(new SampleAdobeHeartbeatPluginDelegate());
         var ahPluginConfig = new AdobeHeartbeatPluginConfig(
@@ -609,7 +609,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
         ahPluginConfig.sdk = settings.HEARTBEAT.SDK;
         ahPluginConfig.debugLogging = false; // set this to false for production apps.
         this._ahPlugin.configure(ahPluginConfig);
-		
+
 		this._installEventListeners();
 	}
 
@@ -619,7 +619,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._videoHeartbeat = null;
 			this._uninstallEventListeners();
 			this._uninstallAdEventListeners();
-			
+
 			this._hasLoad = false;
 			this._hasVolumeChange = false;
 			this._hasSocialOpen = false;
@@ -636,7 +636,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._autoplay = false;
 		}
 	};
-	
+
 	/**
 	 * calculates bitrate averages based on the encoding rates pushed to the array
 	 * within the playback for each video
@@ -644,16 +644,16 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	VideoAnalyticsProvider.prototype._calculateBitrateAverage = function() {
 		var bitrateSum = 0;
 		var averageBitrate = 0;
-		
+
 		for (var bitrate in this._bitrates) {
 			bitrateSum += this._bitrates[bitrate];
 		}
-		
+
 		averageBitrate = Math.round(bitrateSum/this._bitrates.length);
-		
+
 		return averageBitrate;
 	}
-	
+
 	/**
 	 * use for setting custom metadata
 	 */
@@ -670,10 +670,10 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			o_debug('Player event: VIDEO_LOAD');
 			// uncomment for setting custom metadata per video
 			//this._setCustomMetadata();
-			
+
 			this._playerPlugin.trackVideoLoad();
 			this._playerPlugin.trackPlay();
-			
+
 			// check error trigger
 			if (this._errorTrackCode) {
 				this._playerPlugin.trackVideoPlayerError(this._errorTrackCode);
@@ -686,7 +686,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	VideoAnalyticsProvider.prototype._onUnload = function(e) {
 		if (this._videoHeartbeat) {
 			o_debug('Player event: VIDEO_UNLOAD');
-			
+
 			this._playerPlugin.trackVideoUnload();
 		}
 		this.destroy();
@@ -695,7 +695,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	VideoAnalyticsProvider.prototype._onPlay = function() {
 		if (this._videoHeartbeat) {
 			o_debug('Player event: PLAY');
-			
+
 			this._playerPlugin.trackPlay();
 		}
 	};
@@ -716,22 +716,22 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		o_debug('Player event: SEEK_COMPLETE');
 		this._playerPlugin.trackSeekComplete();
 	};
-	
+
 	VideoAnalyticsProvider.prototype._onBufferStart = function(e) {
 		o_debug('Player event: BUFFER_START');
 		var that = this;
-		
+
 		if (this._hasLoad) {
 			this._player.one('playing', function(e) {
 				o_debug('Player event: BUFFER_COMPLETE');
-				
+
 				that._playerPlugin.trackBufferComplete();
 			});
-			
+
 			this._playerPlugin.trackBufferStart();
 		}
 	};
-	
+
 	VideoAnalyticsProvider.prototype._onBitrateChange = function(e) {
 		o_debug('Player event: BITRATE_CHANGE');
 		this._playerPlugin.trackBitrateChange();
@@ -757,7 +757,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._playerPlugin.trackComplete();
 		}
 	};
-	
+
 	/**
 	 * track proper Brightcove Video or Player Error Code
 	 */
@@ -769,20 +769,20 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				errCode,
 				codeToTrack,
 				that;
-			
+
 			that = this;
-			
+
 			this._playerPlugin.trackPause();
-			
+
 			setTimeout(function() {
 				code = e.target.innerText.split("\n");
-				
+
 				for (var i in code) {
 					if (code[i].indexOf(TEXT_TO_FIND) != -1) {
 						errCode = code[i].substr(code.indexOf(TEXT_TO_FIND) + TEXT_TO_FIND.length + 1);
 					}
 				}
-				
+
 				switch (errCode) {
 					case "PLAYER_ERR_NO_SRC":
 						codeToTrack = -1;
@@ -812,7 +812,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 						codeToTrack = "unknown";
 						break;
 				}
-				
+
 				if (that._hasLoad) {
 					that._playerPlugin.trackVideoPlayerError(codeToTrack);
 					that._playerPlugin.trackVideoUnload();
@@ -822,7 +822,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			}, 1000);
 		}
 	};
-	
+
 	VideoAnalyticsProvider.prototype._onAdStart = function(e) {
 		if (this === undefined) { return; }
 		if (this._videoHeartbeat) {
@@ -830,13 +830,13 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._playerPlugin.trackAdStart();
 		}
 	};
-	
+
 	VideoAnalyticsProvider.prototype._onAdError = function(e) {
 		if (this._videoHeartbeat) {
 			o_debug('Player event: IMA3_AD_ERROR');
 			this._playerPlugin.trackAdComplete();
 		}
-	};	
+	};
 
 	VideoAnalyticsProvider.prototype._onAdComplete = function(e) {
 		if (this._videoHeartbeat) {
@@ -852,7 +852,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._playerPlugin.trackPlay();
 		}
 	};
-	
+
 	VideoAnalyticsProvider.prototype._onAdHbTimeUpdate = function(e) {
 		if (this._adPlaying || this._player.ads.state != "ad-playback") { return; }
 		o_debug('Player event: AD_START');
@@ -875,19 +875,19 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	VideoAnalyticsProvider.prototype._onTrackMilestone = function(milestone) {
 		var timePlayed = Math.floor(this._player.currentTime() - this._milestoneTime);
 		this._milestoneTime = Math.floor(this._player.currentTime());
-		
+
 		if (this._dataMapping.bc_data_mapping === undefined || this._dataMapping.disable) { return; };
-		
+
 		var my_eVar = this._dataMapping.bc_data_mapping.name.split(",");
 		this._appMeasurement.linkTrackVars = "events," + this._dataMapping.bc_data_mapping.contentType + "," + this._dataMapping.bc_data_mapping.segment + ",contextData.a.media.name,contextData.a.media.playerName,contextData.a.media.channel,contextData.a.contentType";
-		
+
 		// assign name to all eVars/props defined in config
 		for (var item in my_eVar) {
 			console.log(my_eVar[item]);
 			this._appMeasurement.linkTrackVars += "," + my_eVar[item];
 			this._appMeasurement[my_eVar[item]] = this._player.mediainfo.name;
 		}
-		
+
 		this._appMeasurement[this._dataMapping.bc_data_mapping.contentType]  = 'video';
 		switch(milestone) {
 		case 0:
@@ -931,24 +931,24 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			o_debug('Player event: VOLUME_CHANGE');
 			// Custom event
 			var isVolumeMuted = this._player.muted();
-			
+
 			this._appMeasurement.events = this._dataMapping.bc_volumechange.event;
 			if (isVolumeMuted){
 				this._appMeasurement[this._dataMapping.bc_volumechange.evar] = '0.00';
 			} else {
 				this._appMeasurement[this._dataMapping.bc_volumechange.evar] = this._player.volume().toFixed(2);
-			}			
+			}
 			this._appMeasurement.linkTrackVars = "events," + this._dataMapping.bc_volumechange.evar + ",contextData.a.media.name,contextData.a.media.playerName,contextData.a.media.channel,contextData.a.contentType";
 			this._appMeasurement.linkTrackEvents = this._dataMapping.bc_volumechange.event;
 			this._appMeasurement.tl(true, "bc", "bc_volumechange");
 		}
-	};	
+	};
 
 	VideoAnalyticsProvider.prototype._onAdPause = function(e) {
 		if (!this._dataMapping.disable) {
 			o_debug('Player event: AD_PAUSE');
 			// Custom event
-			this._appMeasurement.events = this._dataMapping.bc_ad_pause.event;		
+			this._appMeasurement.events = this._dataMapping.bc_ad_pause.event;
 			if (this._adplayer && this._adplayer.adPlayer.currentTime){
 				this._appMeasurement[this._dataMapping.bc_ad_pause.evar]  = this._adplayer.adPlayer.currentTime();
 			} else {
@@ -1053,7 +1053,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	VideoAnalyticsProvider.prototype._setupAutoTracking = function() {
 		this._appMeasurement.loadModule("Media");
 		this._appMeasurement.Media.autoTrack = true;
-		this._appMeasurement.Media.trackVars = "events," 
+		this._appMeasurement.Media.trackVars = "events,"
 			+ this._dataMapping.bc_data_mapping.contentType + ','
 			+ this._dataMapping.bc_data_mapping.name + ','
 			+ this._dataMapping.bc_data_mapping.segment;
@@ -1079,26 +1079,26 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				"a.media.milestones" : this._dataMapping.bc_data_mapping.milestones,
 		};
 	};
-	
+
 	// sets up video heartbeat analytics
 	// MUST wait until video metadata has loaded
 	VideoAnalyticsProvider.prototype._setupVideoHeartbeat = function() {
 		o_debug("Player debug: _setupVideoHeartbeat()");
-		
+
 		if (!this._settings.HEARTBEAT.DISABLE) {
 			var configData = new ConfigData(this._settings.HEARTBEAT.TRACKING_SERVER,
 				this._settings.HEARTBEAT.JOB_ID, this._settings.HEARTBEAT.PUBLISHER);
-			
+
 			configData.ovp = this._settings.HEARTBEAT.OVP;
 			configData.sdk = this._settings.HEARTBEAT.SDK;
 			configData.channel = this._settings.HEARTBEAT.CHANNEL;
-	  
+
 			// Comment or explicitly set this to false for production sites.
 			configData.debugLogging = this._settings.HEARTBEAT.DEBUG_LOGGING;
-			
+
 			this._videoHeartbeat = new VideoHeartbeat(new SampleHeartbeatDelegate(),
 									[this._playerPlugin, this._aaPlugin, this._ahPlugin]);
-			
+
 			this._videoHeartbeat.configure(configData);
 		}
 	};
@@ -1114,65 +1114,65 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._hasInitCustom = true;
 		}**/
 	};
-	
+
 	VideoAnalyticsProvider.prototype._playHandler = function(evt) {
 		var that = this;
-		
+
 		// set up the analytics when a video begins playback if it has not yet begun
 		if (!this._hasLoad && this._player.currentTime() == 0) {
 			o_debug("Player Debug: Replay existing video");
 			this._hasLoad = true;
-			
+
 			// require a timeout for instances where new metadata needs to be fetched
 			this._eventTimer = setTimeout(function() {
 				o_debug("Player Debug: Set-up Analytics");
-				
+
 				// reset QoS startup_time variable for playlists
 				if (that._playerLoadTimer && (that._videoThatCompleted != that._player.mediainfo.id)) {
 					clearInterval(that._playerLoadTimer);
 					that._settings.QUALITY.TIME_TO_START = that._timeToStart;
 					that._playerLoadTimer = null;
 				}
-				
+
 				that._initFirstLoad(); // kicking off set up and _onLoad
 			}, 1000);
 		}
-		
+
 		// resume analytics from pause
 		if (!this._adPlaying && this._hasLoad){
 			o_debug("Player Debug: Resuming Analytics from Pause Event");
-			
+
 			this._onPlay();
 		}
 	};
-	
+
 	VideoAnalyticsProvider.prototype._installEventListeners = function() {
 		var that = this;
-		
+
 		o_debug("Player Debug: Install Event Listeners");
-		
+
 		// We register as observers to various VideoPlayer events.
 		// HTML events
 		this._player.on('play', this._playHandler.bind(this));
-		
+
 		if (this._autoplay) { this._playHandler(); }
-		
+
 		// pause analytics
 		this._player.on('pause', function(evt) {
 			if (!that._adPlaying){
 				that._onPause(evt);
 			}
 		});
-		
+
 		// complete and unload analytics
 		this._player.on('ended', function(evt) {
 			that._timeToStart = 0;
 			that._videoThatCompleted = that._player.mediainfo.id;
-			
+
 			that._playerLoadTimer = setInterval(function() {
                 that._timeToStart++;
             }, 1000);
-			
+
 			if (!that._adPlaying){
 			  if (!that._tracked100){
 			    that._tracked100 = true;
@@ -1182,7 +1182,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				that._onUnload(evt);
 			}
 		});
-		
+
 		/**
 		 * do not track these for new implementation
 		 */
@@ -1205,10 +1205,10 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 		this._player.on('adsready', function(evt) {
 			o_debug('Player event: adsready');
-			
+
 			that._initAdManager(evt);
 		});
-		
+
 		/**this._player.on('adstart', function(evt) {
 			o_debug('Player event: adstart');
 			that._adPlaying = true;
@@ -1218,20 +1218,20 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			});
 			that._onAdStart(evt);
 		});**/
-		
+
 		if (typeof this._player.ima3 !== "undefined") {
 			this._player.ima3.adPlayer.on('timeupdate', function(evt){
 				that._onAdHbTimeUpdate();
 			});
 		}
-		
+
 		this._player.on('adend', function(evt) {
 			o_debug('Player event: adend');
 			that._adPlaying = false;
-			that._onAdComplete(evt);			
+			that._onAdComplete(evt);
 			that._uninstallAdEventListeners();
 		});
-		
+
 		this._player.on('fullscreenchange', function(evt) {
 			if (that._player.isFullScreen()) {
 				that._onFullscreenEnter(evt);
@@ -1239,20 +1239,20 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				that._onFullscreenExit(evt);
 			}
 		});
-		
+
 		this._player.on('waiting', function(evt) {
 			if (that._hasLoad) {
 				that._onBufferStart(evt);
 			}
 		});
-		
+
 		/**
 		 * will dispatch only for Flash tech/HLS video
 		 */
 		this._player.on('ratechange', function(evt) {
 			that._onBitrateChange(evt);
 		});
-		
+
 		// Tracking mistore
 		this._player.on('timeupdate', function(evt) {
 			if (that._adPlaying) {
@@ -1280,19 +1280,19 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				that._onTrackMilestone(75);
 			}
 		});
-		
+
 		if (!this._hasInitCustom && !this._dataMapping.disable) {
 			this._initSocial();
 			this._initVolumeEvent();
 			this._hasInitCustom = true;
 		}
 	};
-	
+
 	VideoAnalyticsProvider.prototype._uninstallEventListeners = function() {
 		var that = this;
-		
+
 		o_debug("Player Debug: Uninstall Event Listeners");
-		
+
 		// We register as observers to various VideoPlayer events.
 		// HTML events
 		this._player.off('play', this._playHandler.bind(this));
@@ -1310,9 +1310,9 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 
 		// Brightcove-specific event
 		this._player.off('fullscreenchange', function(evt) {});
-		
+
 		this._player.off('waiting', function(evt) {});
-		
+
 		this._player.off('ratechange', function(evt) {});
 		this._player.off('timeupdate', function(evt) {});
 	};
@@ -1328,17 +1328,17 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		var that = this;
 		if (!this._adplayer.adsManager)
 			return;
-		
+
 		if (typeof this._player.ima3 !== "undefined") {
 			this._player.ima3.adPlayer.on('play', function(evt){
 				that._onAdHbPlay(evt);
 			});
-			
+
 			this._player.ima3.adPlayer.on('pause', function(evt){
 				that._onAdHbPause(evt);
 				that._onAdPause(evt);
 			});
-			
+
 			this._player.on('ima3error', function(evt) {
 				o_debug('Player event: IMA3 Ad Error');
 				that._adPlaying = false;
@@ -1356,14 +1356,14 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				that._uninstallAdEventListeners();
 			});
 		}
-		
+
 		/**
 		 * google.ima.AdEvent do not currently exist in plugin
 		 **/
 		/**this._adplayer.adsManager.addEventListener(
 				google.ima.AdEvent.Type.STARTED, function(evt) {
 					that._onAdHbPlay(evt);
-				}, false, this);		
+				}, false, this);
 		this._adplayer.adsManager.addEventListener(
 				google.ima.AdEvent.Type.PAUSED, function(evt) {
 					that._onAdHbPause(evt);
@@ -1387,7 +1387,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 			this._player.off('ima3error', function(evt) {});
 			this._player.off('ima3-ad-error', function(evt) {});
 		}
-		
+
 		/**
 		 * google.ima.AdEvent do not currently exist in plugin
 		 **/
@@ -1408,7 +1408,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	};
 	VideoAnalyticsProvider.prototype._initVolumeEvent = function() {
 		var that = this;
-		
+
 		if (this._player.controlBar.volumeMenuButton) {
 			this._volumeMenuButton = this._player.controlBar.volumeMenuButton;
 			this._volumeMenuButton.on('click', function(evt) {
@@ -1422,11 +1422,11 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		if (document.addEventListener) {
 			document.addEventListener('click', function(evt) {
 				that._checkVolumeChange();
-			});			
+			});
 		} else if (document.on) {
 			document.on('click', function(evt) {
 				that._checkVolumeChange();
-			});	
+			});
 		} else if (document.attachEvent) {
 			document.attachEvent('onclick', function(evt) {
 				that._checkVolumeChange();
@@ -1436,11 +1436,11 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		if (document.addEventListener) {
 			document.addEventListener('mouseup', function(evt) {
 				that._checkVolumeChange();
-			});			
+			});
 		} else if (document.on) {
 			document.on('mouseup', function(evt) {
 				that._checkVolumeChange();
-			});	
+			});
 		} else if (document.attachEvent) {
 			document.attachEvent('onmouseup', function(evt) {
 				that._checkVolumeChange();
@@ -1452,14 +1452,14 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 					that._hasVolumeChange = false;
 					that._onVolumeChange(evt);
 				}
-			});			
+			});
 		} else if (document.on) {
 			document.on('touchend', function(evt) {
 				if (that._hasVolumeChange){
 					that._hasVolumeChange = false;
 					that._onVolumeChange(evt);
 				}
-			});	
+			});
 		} else if (document.attachEvent) {
 			document.attachEvent('ontouchend', function(evt) {
 				if (that._hasVolumeChange){
@@ -1471,7 +1471,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	};
 	VideoAnalyticsProvider.prototype._initSocial = function() {
 		var that = this;
-		
+
 		if (this._player.controlBar.socialButton) {
 			this._socialButton = this._player.controlBar.socialButton;
 			this._socialButton.on('click', function(evt) {
@@ -1494,18 +1494,18 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 	};
 	VideoAnalyticsProvider.prototype._initSocialClose = function() {
 		var that = this;
-		
+
 		if (this._player.socialOverlay
 				&& this._player.socialOverlay.closeButton) {
 			this._socialCloseButton = this._player.socialOverlay.closeButton;
 			if (this._socialCloseButton.addEventListener) {
 				this._socialCloseButton.addEventListener('click', function(evt) {
 					that._checkSocialClose(evt);
-				});			
+				});
 			} else if (this._socialCloseButton.on) {
 				this._socialCloseButton.on('click', function(evt) {
 					that._checkSocialClose(evt);
-				});	
+				});
 			} else if (this._socialCloseButton.attachEvent) {
 				this._socialCloseButton.attachEvent('onclick', function(evt) {
 					that._checkSocialClose(evt);
@@ -1517,7 +1517,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		{
 			if (!evt) evt = event;
 			if (evt.keyCode == 27){
-				that._checkSocialClose(evt);			
+				that._checkSocialClose(evt);
 			}
 		}
 	};
@@ -1528,9 +1528,9 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 				if (that._player.socialOverlay.el_.offsetParent === null){
 					that._onSocialClosed(evt);
 					that._hasSocialOpen = false
-				} 
+				}
 			}, 500);
-		}	
+		}
 	}
 	VideoAnalyticsProvider.prototype._checkVolumeChange = function(evt) {
 		var that = this;
@@ -1549,7 +1549,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 /** ************************ PLUGINS SECTION ************************ */
 /**
  * Omniture analytic plugin for video.js.
- * 
+ *
  */
 (function(window, document, vjs, undefined) {
 	"use strict";
@@ -1667,16 +1667,16 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		appMeasurement.visitorNamespace = settings.VISITOR_API.NAMESPACE;
 		appMeasurement.trackingServer = settings.APP_MEASUREMENT.TRACKING_SERVER;
 		appMeasurement.account = settings.APP_MEASUREMENT.RSID;
-		
+
 		// Create the Analytics provider
 		var analyticsProvider = new VideoAnalyticsProvider(appMeasurement,
 				player, settings, autoplay, o_debug);
-		
+
 		// updates config object for client-specific values when necessary, e.g. QoS value changes
 		var setConfigSettings = function(newOptions) {
 			analyticsProvider._settings = newOptions;
 		};
-		
+
 		return {
 			setConfigSettings: setConfigSettings
 		};
