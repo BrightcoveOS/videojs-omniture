@@ -389,7 +389,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		var currentRendition,
 			averageBitrate = 0;
 		
-		if (typeof this._player.hls.playlists !== "undefined") {
+		if (typeof this._player.hls !== "undefined" && typeof this._player.hls.playlists !== "undefined") {
 			currentRendition = this._player.hls.playlists.media();
 			
 			if (this._provider._bitrates.indexOf(currentRendition.attributes.BANDWIDTH) == -1) {
