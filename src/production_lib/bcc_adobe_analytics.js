@@ -1119,7 +1119,7 @@ function s_pgicq(){var a=window,k=a.s_giq,q,r,n;if(k)for(q=0;q<k.length;q++)r=k[
 		var that = this;
 		
 		// set up the analytics when a video begins playback if it has not yet begun
-		if (!this._hasLoad && this._player.currentTime() == 0) {
+		if (!this._hasLoad) {
 			o_debug("Player Debug: Replay existing video");
 			this._hasLoad = true;
 			
